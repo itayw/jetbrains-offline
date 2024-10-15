@@ -1,0 +1,123 @@
+name: Build and Release Syncer & Server
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Triggers the workflow on new version tags
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.18'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Build Syncer (Linux)
+        run: |
+          cd cmd/syncer
+          GOOS=linux GOARCH=amd64 go build -o ../../bin/syncer-linux main.go
+
+      - name: Build Server (Linux)
+        run: |
+          cd cmd/server
+          GOOS=linux GOARCH=amd64 go build -o ../../bin/server-linux main.go
+
+      - name: Build Syncer (Windows)
+        run: |
+          cd cmd/syncer
+          GOOS=windows GOARCH=amd64 go build -o ../../bin/syncer.exe main.go
+
+      - name: Build Server (Windows)
+        run: |
+          cd cmd/server
+          GOOS=windows GOARCH=amd64 go build -o ../../bin/server.exe main.go
+
+      - name: Archive Syncer and Server
+        run: |
+          mkdir -p release
+          tar -czvf release/syncer-linux.tar.gz -C bin syncer-linux
+          tar -czvf release/server-linux.tar.gz -C bin server-linux
+          zip release/syncer-windows.zip bin/syncer.exe
+          zip release/server-windows.zip bin/server.exe
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-binaries
+          path: release/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: built-binaries
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Syncer & Server (Linux) to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/syncer-linux.tar.gz
+          asset_name: syncer-linux.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Server (Linux) to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/server-linux.tar.gz
+          asset_name: server-linux.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Syncer & Server (Windows) to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/syncer-windows.zip
+          asset_name: syncer-windows.zip
+          asset_content_type: application/zip
+
+      - name: Upload Server (Windows) to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/server-windows.zip
+          asset_name: server-windows.zip
+          asset_content_type: application/zip

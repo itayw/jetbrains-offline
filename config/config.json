@@ -1,0 +1,15 @@
+{
+  "intellij": {
+    "builds": [
+      {
+        "since-build": "233",
+        "until-build": "*"
+      }
+    ]
+  },
+  "plugins": [
+    {
+      "id": "dev.turingcomplete.intellijdevelopertoolsplugins"
+    }
+  ]
+}
