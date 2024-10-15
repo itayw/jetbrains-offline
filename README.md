@@ -32,7 +32,7 @@ This project provides a solution for syncing and serving JetBrains IntelliJ-base
 │               └── metadata.json
 ├── README.md            # Project documentation
 └── config.json          # Configuration file for the syncer
-</code>
+```
 
 ## Setup & Usage
 
@@ -61,12 +61,12 @@ Define the plugins you want to sync in a `config.json` file:
     }
   ]
 }
-</code>
+```
 
 #### Running the Syncer
 ```
 go run cmd/syncer/main.go
-</code>
+```
 This will:
 - Download plugins listed in `config.json` (if compatible with the specified builds).
 - Store each plugin's `.zip` file and its metadata in the `output/plugins` directory.
@@ -78,7 +78,7 @@ Next, run the server to serve the downloaded plugins and the generated `index.xm
 #### Running the Server
 ```
 go run cmd/server/main.go
-</code>
+```
 This will:
 - Start a simple HTTP server on `http://localhost:8080` that serves the plugins and `index.xml`.
 - Allow IntelliJ-based IDEs to access the offline marketplace.
