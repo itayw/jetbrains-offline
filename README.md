@@ -26,9 +26,9 @@ This project provides a solution for syncing and serving JetBrains IntelliJ-base
 │   └── models/          # Shared data models (PluginMetadata, etc.)
 ├── output/
 │   └── plugins/         # Where downloaded plugins and metadata are stored
-│       └── &lt;plugin-id&gt;/ 
-│           └── &lt;version&gt;/
-│               ├── &lt;plugin&gt;.zip
+│       └── <plugin-id>/ 
+│           └── <version>/
+│               ├── <plugin>.zip
 │               └── metadata.json
 ├── README.md            # Project documentation
 └── config.json          # Configuration file for the syncer
