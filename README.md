@@ -1,14 +1,14 @@
-# IntelliJ Offline Plugin Syncer & Server
+# JetBrains Offline Plugin Syncer & Server
 
-This project provides a solution for syncing and serving JetBrains IntelliJ-based IDE plugins in air-gapped environments. The system consists of two components:
+This project provides a solution for syncing and serving JetBrains based IDE plugins in air-gapped environments. The system consists of two components:
 1. **Syncer**: Downloads plugins from the JetBrains Marketplace, stores them locally, and generates an `index.xml` file with metadata.
 2. **Server**: Hosts the downloaded plugins and serves the `index.xml` file as an offline plugin marketplace.
 
 ## Features
-- **Air-gapped Support**: Sync and serve IntelliJ plugins without an internet connection.
-- **Automatic Plugin Compatibility Check**: Downloads only plugins that are compatible with the specified IntelliJ builds.
+- **Air-gapped Support**: Sync and serve JetBrains plugins without an internet connection.
+- **Automatic Plugin Compatibility Check**: Downloads only plugins that are compatible with the specified JetBrains builds.
 - **Metadata Handling**: Stores plugin metadata for easy generation of `index.xml`.
-- **Simple HTTP Server**: Serves the plugins and the `index.xml` file, which can be accessed by IntelliJ-based IDEs like PyCharm.
+- **Simple HTTP Server**: Serves the plugins and the `index.xml` file, which can be accessed by JetBrains based IDEs like PyCharm.
 
 ## Requirements
 - Go 1.18+ installed.
@@ -81,10 +81,10 @@ go run cmd/server/main.go
 ```
 This will:
 - Start a simple HTTP server on `http://localhost:8080` that serves the plugins and `index.xml`.
-- Allow IntelliJ-based IDEs to access the offline marketplace.
+- Allow JetBrains based IDEs to access the offline marketplace.
 
-### 3. Configure IntelliJ IDE to Use the Offline Marketplace
-1. Open your JetBrains IDE (PyCharm, IntelliJ, etc.).
+### 3. Configure JetBrains IDE to Use the Offline Marketplace
+1. Open your JetBrains IDE (PyCharm, Webstorm, etc.).
 2. Go to `Settings` > `Plugins` > `⚙️` (gear icon) > `Manage Plugin Repositories`.
 3. Add `http://localhost:8080/index.xml` as a custom repository.
 4. Your IDE will now fetch plugins from your local server.
